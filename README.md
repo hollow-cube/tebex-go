@@ -46,22 +46,22 @@ The headless API is not completely supported, the supported endpoints can be fou
 More information about the headless api can be found on the [official documentation](https://docs.tebex.io/developers/headless-api/overview).
 
 ```go
-# Obtain the default client (using the official endpoint & http.DefaultClient)
+// Obtain the default client (using the official endpoint & http.DefaultClient)
 headless := tebex.DefaultHeadlessClient
 
-# Create a new basket
+// Create a new basket
 basket, err := headless.CreateBasket(ctx, myWebstoreId, tebex.HeadlessCreateBasketRequest{Username: "notmattw"})
 
-# Add a package to the basket
+// Add a package to the basket
 basket, err := headless.BasketAddPackage(ctx, basket.Ident, tebex.HeadlessBasketAddPackageRequest{PackageId: 789, Quantity: 1})
 
-# Add a creator code to the basket
+// Add a creator code to the basket
 err := headless.BasketApplyCreatorCode(ctx, myWebstoreId, basket.Ident, "myCreatorCode")
 
-# Remove any applied creator code from the basket
+// Remove any applied creator code from the basket
 err := headless.BasketRemoveCreatorCode(ctx, myWebstoreId, basket.Ident)
 
-# Get the checkout link for the basket (will not be present until at least one package is added)
+// Get the checkout link for the basket (will not be present until at least one package is added)
 checkoutUrl := basket.Links.Checkout
 ```
 
