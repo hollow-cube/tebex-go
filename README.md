@@ -45,7 +45,7 @@ func Handle(r *http.Request, w http.ResponseWriter) error {
 The headless API is not completely supported, the supported endpoints can be found below.
 More information about the headless api can be found on the [official documentation](https://docs.tebex.io/developers/headless-api/overview).
 
-```
+```go
 # Obtain the default client (using the official endpoint & http.DefaultClient)
 headless := tebex.DefaultHeadlessClient
 
