@@ -2,8 +2,9 @@
 
 [![license](https://img.shields.io/github/license/hollow-cube/tebex-go.svg)](LICENSE)
 
-A small Tebex webhook implementation for Go. Includes all the parts to validate and parse a
-Tebex webhook message.
+A small Tebex webhook & partial headless API implementation for Go. Includes all the parts to 
+validate and parse a Tebex webhook message, as well as a partial client implementation of the
+headless api for creating baskets/checkout links.
 
 ## Install
 
@@ -11,9 +12,7 @@ Tebex webhook message.
 go get github.com/hollow-cube/tebex-go@latest
 ```
 
-## Usage
-
-The library can be used with
+## Webhook Processing
 
 ```go
 func Handle(r *http.Request, w http.ResponseWriter) error {
@@ -41,3 +40,36 @@ func Handle(r *http.Request, w http.ResponseWriter) error {
 }
 ```
 
+## Headless API
+
+The headless API is not completely supported, the supported endpoints can be found below.
+More information about the headless api can be found on the [official documentation](https://docs.tebex.io/developers/headless-api/overview).
+
+```
+# Obtain the default client (using the official endpoint & http.DefaultClient)
+headless := tebex.DefaultHeadlessClient
+
+# Create a new basket
+basket, err := headless.CreateBasket(ctx, myWebstoreId, tebex.HeadlessCreateBasketRequest{Username: "notmattw"})
+
+# Add a package to the basket
+basket, err := headless.BasketAddPackage(ctx, basket.Ident, tebex.HeadlessBasketAddPackageRequest{PackageId: 789, Quantity: 1})
+
+# Add a creator code to the basket
+err := headless.BasketApplyCreatorCode(ctx, myWebstoreId, basket.Ident, "myCreatorCode")
+
+# Remove any applied creator code from the basket
+err := headless.BasketRemoveCreatorCode(ctx, myWebstoreId, basket.Ident)
+
+# Get the checkout link for the basket (will not be present until at least one package is added)
+checkoutUrl := basket.Links.Checkout
+```
+
+## Contributing
+
+Contibutions in the form of bug reports (via issues) or pull requests are welcome.
+Discussion of the project can be done in the [Hollow Cube Discord Server](https://discord.hollowcube.net).
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
