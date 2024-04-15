@@ -1,5 +1,7 @@
 package tebex
 
+import "encoding/json"
+
 type HeadlessCreateBasketRequest struct {
 	CompleteUrl          string         `json:"complete_url,omitempty"`
 	CompleteAutoRedirect bool           `json:"complete_auto_redirect,omitempty"`
@@ -17,21 +19,33 @@ type HeadlessBasketAddPackageRequest struct {
 }
 
 type HeadlessBasket struct {
-	Ident       string `json:"ident"`
-	Complete    bool   `json:"complete"`
-	Id          int    `json:"id"`
-	Country     string `json:"country"`
-	Ip          string `json:"ip"`
-	UsernameId  string `json:"username_id"`
-	Username    string `json:"username"`
-	BasePrice   int    `json:"base_price"`
-	SalesTax    int    `json:"sales_tax"`
-	TotalPrice  int    `json:"total"`
-	Packages    []any  `json:"packages"`
-	Coupons     []any  `json:"coupons"`
-	GiftCards   []any  `json:"gift_cards"`
-	CreatorCode string `json:"creator_code"`
-	Links       struct {
-		Checkout string `json:"checkout"`
-	} `json:"links"`
+	Ident       string               `json:"ident"`
+	Complete    bool                 `json:"complete"`
+	Id          int                  `json:"id"`
+	Country     string               `json:"country"`
+	Ip          string               `json:"ip"`
+	UsernameId  string               `json:"username_id"`
+	Username    string               `json:"username"`
+	BasePrice   float64              `json:"base_price"`
+	SalesTax    float64              `json:"sales_tax"`
+	TotalPrice  float64              `json:"total"`
+	Packages    []any                `json:"packages"`
+	Coupons     []any                `json:"coupons"`
+	GiftCards   []any                `json:"gift_cards"`
+	CreatorCode string               `json:"creator_code"`
+	Links       *HeadlessBasketLinks `json:"links"`
+}
+
+type HeadlessBasketLinks struct {
+	Checkout string `json:"checkout"`
+}
+
+func (h *HeadlessBasketLinks) UnmarshalJSON(raw []byte) error {
+	// For some reason they return an empty array when this is empty, so handle that case.
+	if string(raw) == "[]" {
+		return nil
+	}
+
+	type Alias HeadlessBasketLinks
+	return json.Unmarshal(raw, (*Alias)(h))
 }

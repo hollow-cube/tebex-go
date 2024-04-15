@@ -184,7 +184,7 @@ func do[T any](httpClient *http.Client, req *http.Request) (*headlessResponse[T]
 	return &res, nil
 }
 
-// knownErrors is a map of the plain text error messages that are known/handled explicitly.
+// kno wnErrors is a map of the plain text error messages that are known/handled explicitly.
 // For some unknown reason the tebex error gives no useful info besides the user facing/plaintext message.
 var knownErrors = map[string]error{
 	"Invalid account identifier provided": ErrHeadlessWebstoreNotFound,
