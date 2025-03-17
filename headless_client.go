@@ -3,6 +3,7 @@ package tebex
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -23,13 +24,14 @@ var (
 var DefaultHeadlessClient = NewHeadlessClient(DefaultBaseUrl)
 
 type HeadlessClient struct {
-	url string
+	url, privateKey string
 
 	httpClient *http.Client
 }
 
 type HeadlessClientParams struct {
 	Url        string // Required
+	PrivateKey string // Optional
 	HttpClient *http.Client
 }
 
@@ -40,6 +42,7 @@ func NewHeadlessClient(url string) *HeadlessClient {
 func NewHeadlessClientWithOptions(params HeadlessClientParams) *HeadlessClient {
 	c := &HeadlessClient{
 		url:        params.Url,
+		privateKey: params.PrivateKey,
 		httpClient: params.HttpClient,
 	}
 	if strings.HasSuffix(c.url, "/") {
@@ -65,6 +68,14 @@ func (c *HeadlessClient) CreateBasket(ctx context.Context, webstoreId string, bo
 		return nil, err
 	}
 	req.Header.Set("Content-Type", "application/json")
+	if body.IPAddress != "" {
+		if c.privateKey == "" {
+			return nil, fmt.Errorf("private key must be provided when IPAddress is set")
+		}
+
+		authString := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s", webstoreId, c.privateKey)))
+		req.Header.Set("Authorization", fmt.Sprintf("Basic %s", authString))
+	}
 
 	res, err := do[HeadlessBasket](c.httpClient, req)
 	if err != nil {
