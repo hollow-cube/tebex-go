@@ -8,8 +8,10 @@ type HeadlessCreateBasketRequest struct {
 	CancelUrl            string         `json:"cancel_url,omitempty"`
 	Custom               map[string]any `json:"custom,omitempty"`
 
-	// Should be present for Minecraft webstores.
+	// Username should be present for Minecraft webstores.
 	Username string `json:"username,omitempty"`
+	// IPAddress should be present if creating the request from a backend server
+	IPAddress string `json:"ip_address,omitempty"`
 }
 
 type HeadlessBasketAddPackageRequest struct {
